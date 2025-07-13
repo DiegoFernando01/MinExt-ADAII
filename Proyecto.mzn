@@ -78,3 +78,9 @@ constraint forall(i in 1..m where p[i] > 0) (
 
 % 8. conservación total de la población
 constraint sum(i in 1..m) (f[i]) = n;
+
+% ==================== FUNCIÓN OBJETIVO ====================
+
+% minimizar el extremismo total final
+var float: extremismo_total = sum(i in 1..m) (f[i] * ext[i]);
+
