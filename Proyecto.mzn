@@ -26,3 +26,14 @@ float: ct;
 
 % número máximo de movimientos permitidos
 int: maxM;
+
+% ==================== VARIABLES DE DECISIÓN ====================
+
+% número de personas que se mueven de opinión i a opinión j
+array[1..m, 1..m] of var 0..n: x;
+
+% variables binarias para detectar movimientos hacia opiniones vacías
+array[1..m] of var 0..1: delta;
+
+% número final de personas por opinión
+array[1..m] of var 0..n: f;
