@@ -73,3 +73,8 @@ constraint forall(i in 1..m where p[i] = 0) (
 constraint forall(i in 1..m where p[i] > 0) (
     delta[i] = 0
 );
+
+% ==================== RESTRICCIONES REDUNDANTES ====================
+
+% 8. conservación total de la población
+constraint sum(i in 1..m) (f[i]) = n;
