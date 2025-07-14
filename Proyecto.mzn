@@ -84,3 +84,16 @@ constraint sum(i in 1..m) (f[i]) = n;
 % minimizar el extremismo total final
 var float: extremismo_total = sum(i in 1..m) (f[i] * ext[i]);
 
+% ==================== ESTRATEGIAS DE BÚSQUEDA ====================
+
+% 1) Búsqueda por defecto (sin heurística adicional)
+solve minimize extremismo_total;
+
+% 2) First-Fail (dominio más pequeño primero)
+% solve :: int_search([x[i,j] | i in 1..m, j in 1..m], first_fail, indomain_min, complete) minimize extremismo_total;
+
+% 3) Input-Order (orden de índices)
+% solve :: int_search([x[i,j] | i in 1..m, j in 1..m], input_order, indomain_max, complete) minimize extremismo_total;
+
+% 4) Regret-Based (max-regret)
+% solve :: int_search([x[i,j] | i in 1..m, j in 1..m], max_regret, indomain_min, complete) minimize extremismo_total;
