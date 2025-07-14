@@ -97,3 +97,23 @@ solve minimize extremismo_total;
 
 % 4) Regret-Based (max-regret)
 % solve :: int_search([x[i,j] | i in 1..m, j in 1..m], max_regret, indomain_min, complete) minimize extremismo_total;
+
+output [
+    "=== SOLUCIÓN MINEXT ===\n",
+    "Extremismo Total: ", show_float(6,3,extremismo_total), "\n\n",
+    
+    "=== MOVIMIENTOS ===\n"
+] ++
+[ if fix(x[i,j]) > 0 then
+    "Mover " ++ show(x[i,j]) ++ " personas: Opinión " ++ show(i) ++ " → Opinión " ++ show(j) ++ "\n"
+  else ""
+  endif | i in 1..m, j in 1..m ] ++
+[
+    "\n=== DISTRIBUCIÓN FINAL ===\n"
+] ++
+[ "Opinión " ++ show(i) ++ ": " ++ show(f[i]) ++ " personas\n" | i in 1..m ] ++
+[
+    "\n=== RECURSOS UTILIZADOS ===\n",
+    "Costo total: ", show_float(6,2,sum(i in 1..m, j in 1..m)(fix(x[i,j]) * c[i,j]) + sum(i in 1..m where p[i] = 0)(fix(delta[i]) * ce[i])), " / ", show_float(6,2,ct), "\n",
+    "Movimientos: ", show(sum(i in 1..m, j in 1..m)(fix(x[i,j]))), " / ", show(maxM), "\n"
+];
