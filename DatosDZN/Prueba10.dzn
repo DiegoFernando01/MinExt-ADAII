@@ -1,0 +1,21 @@
+% Archivo de datos generado automáticamente
+% MinExt - Minimización del Extremismo
+
+n = 20;
+m = 5;
+
+% Distribución inicial de personas por opinión
+p = [5, 4, 3, 2, 6];
+
+% Valores de extremismo por opinión
+ext = [0.817, 0.903, 0.636, 0.361, 0.496];
+
+% Costos extra por mover hacia opinión inicialmente vacía
+ce = [16.367, 8.01, 5.026, 1.666, 12.434];
+
+% Matriz de costos de movimiento entre opiniones
+c = array2d(1..m, 1..m, [0.0, 0.487, 4.668, 4.387, 2.446, 4.732, 0.0, 1.414, 1.751, 4.515, 0.683, 0.669, 0.0, 3.419, 1.975, 2.119, 0.075, 4.933, 0.0, 2.772, 3.719, 2.603, 1.174, 4.005, 0.0]);
+
+% Restricciones de recursos
+ct = 17.35;
+maxM = 32;
