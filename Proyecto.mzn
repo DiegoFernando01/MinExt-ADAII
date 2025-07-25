@@ -3,29 +3,14 @@
 
 % ==================== PARÁMETROS DE ENTRADA ====================
 
-% número total de personas
-int: n;
-
-% número de opiniones posibles
-int: m;
-
-% distribución inicial por opinión
-array[1..m] of int: p;
-
-% valores de extremismo por opinión
-array[1..m] of float: ext;
-
-% costos extra por mover hacia opinión
-array[1..m] of float: ce;
-
-% matriz de costos de movimiento entre opiniones
-array[1..m, 1..m] of float: c;
-
-% costo total máximo permitido
-float: ct;
-
-% número máximo de movimientos permitidos
-int: maxM;
+int: n; % número total de personas
+int: m; % número de opiniones posibles
+array[1..m] of int: p; % distribución inicial por opinión
+array[1..m] of float: ext; % valores de extremismo por opinión
+array[1..m] of float: ce; % costos extra por mover hacia opinión
+array[1..m, 1..m] of float: c; % matriz de costos de movimiento entre opiniones
+float: ct; % costo total máximo permitido
+int: maxM; % número máximo de movimientos permitidos
 
 % ==================== VARIABLES DE DECISIÓN ====================
 
@@ -58,45 +43,22 @@ constraint forall(i in 1..m) (
 % 4. restricción de costo total
 constraint (
     sum(i in 1..m, j in 1..m) (x[i,j] * c[i,j]) + 
-    sum(i in 1..m where p[i] = 0) (delta[i] * ce[i])
+    sum(i in 1..m, j in 1..m where p[j] = 0) (x[i,j] * ce[j])
 ) <= ct;
 
 % 5. restricción de movimientos máximos
-constraint sum(i in 1..m, j in 1..m) (x[i,j]) <= maxM;
+constraint sum(i in 1..m, j in 1..m) (x[i,j] * abs(j - i)) <= maxM;
 
-% 6. activación de variables delta para opiniones inicialmente vacías
-constraint forall(i in 1..m where p[i] = 0) (
-    delta[i] >= bool2int(sum(j in 1..m) (x[j,i]) > 0)
-);
-
-% 7. para opiniones no vacías inicialmente, delta debe ser 0
-constraint forall(i in 1..m where p[i] > 0) (
-    delta[i] = 0
-);
-
-% ==================== RESTRICCIONES REDUNDANTES ====================
-
-% 8. conservación total de la población
-constraint sum(i in 1..m) (f[i]) = n;
-
-% ==================== FUNCIÓN OBJETIVO ====================
+% ==================== FUNCIÓN OBJETIVO ==========================
 
 % minimizar el extremismo total final
 var float: extremismo_total = sum(i in 1..m) (f[i] * ext[i]);
 
-% ==================== ESTRATEGIAS DE BÚSQUEDA ====================
+% ==================== ESTRATEGIA DE BÚSQUEDA ====================
 
-% 1) Búsqueda por defecto (sin heurística adicional)
 solve minimize extremismo_total;
 
-% 2) First-Fail (dominio más pequeño primero)
-% solve :: int_search([x[i,j] | i in 1..m, j in 1..m], first_fail, indomain_min, complete) minimize extremismo_total;
-
-% 3) Input-Order (orden de índices)
-% solve :: int_search([x[i,j] | i in 1..m, j in 1..m], input_order, indomain_max, complete) minimize extremismo_total;
-
-% 4) Regret-Based (max-regret)
-% solve :: int_search([x[i,j] | i in 1..m, j in 1..m], max_regret, indomain_min, complete) minimize extremismo_total;
+% ==================== SALIDA ==========================
 
 output [
     "=== SOLUCIÓN MINEXT ===\n",
