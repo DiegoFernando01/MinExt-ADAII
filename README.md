@@ -4,6 +4,8 @@
 
 ---
 
+
+
 # Proyecto #2 - El Problema de Minimizar el Extremismo Presente en una Población
 
 ## Universidad del Valle - Escuela de Ingeniería de Sistemas y Computación
@@ -43,6 +45,11 @@ MinExt-ADAII es un proyecto desarrollado para la asignatura de Analisís y Desar
 - **generar_datosDZN.py**: Script en Python que convierte los archivos de datos originales en `DatosProyecto` al formato `.dzn` para ser usados por MiniZinc.
 - **README.md**: Este archivo, que contiene la documentación del proyecto.
 - **requirements.txt**: Archivo con las dependencias necesarias para ejecutar el proyecto en Python.
+
+- **ConvertirArchivos/**
+  - README.md: Documentación específica de esta carpeta.
+  - interfaz.py: Código para la interfaz relacionada con la conversión.
+  - utils.py: Funciones auxiliares para la conversión y procesamiento de archivos.
 
 ---
 

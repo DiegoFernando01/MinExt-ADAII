@@ -48,4 +48,11 @@ Requisitos previos:
 - Tener Python 3.x instalado.
 - Tener MiniZinc instalado y agregado al PATH del sistema.
 
+8. ConvertirArchivos/
+   - Contiene scripts y utilidades para la conversión y manejo de archivos.
+   - Incluye:
+     - README.md: Documentación específica de esta carpeta.
+     - interfaz.py: Código para la interfaz relacionada con la conversión.
+     - utils.py: Funciones auxiliares para la conversión y procesamiento de archivos.
+
 Este archivo proporciona una guía completa y detallada para entender cada componente entregado y cómo ejecutar correctamente la aplicación MinExt-ADAII.
