@@ -4,8 +4,6 @@
 
 ---
 
-
-
 # Proyecto #2 - El Problema de Minimizar el Extremismo Presente en una Población
 
 ## Universidad del Valle - Escuela de Ingeniería de Sistemas y Computación
