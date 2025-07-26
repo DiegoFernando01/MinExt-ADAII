@@ -42,7 +42,9 @@ constraint forall(i in 1..m) (
 
 % 4. restricción de costo total
 constraint (
-    sum(i in 1..m, j in 1..m) (x[i,j] * c[i,j]) + 
+    % Costo base para todos los movimientos
+    sum(i in 1..m, j in 1..m) (x[i,j] * c[i,j] * (1.0 + p[i] / n)) + 
+    % Costo extra para movimientos a opiniones inicialmente vacías
     sum(i in 1..m, j in 1..m where p[j] = 0) (x[i,j] * ce[j])
 ) <= ct;
 

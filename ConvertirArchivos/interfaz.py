@@ -24,9 +24,12 @@ class GeneradorDZNGUI:
     # Configurar el directorio base del proyecto
     self.project_dir = Path(__file__).parent.parent
     self.dzn_dir = self.project_dir / "DatosDZN"
+    self.source_dirs = [
+        self.project_dir / "DatosProyecto",
+        self.project_dir / "MisInstancias"
+    ]
     
     # Variables
-    self.selected_folder = tk.StringVar()
     self.processing = False
     
     self.setup_ui()
@@ -48,27 +51,12 @@ class GeneradorDZNGUI:
                            font=("Arial", 16, "bold"))
     title_label.grid(row=0, column=0, columnspan=3, pady=(0, 20))
     
-    # Selección de carpeta
-    ttk.Label(main_frame, text="Carpeta de archivos .txt:").grid(row=1, column=0, sticky=tk.W, pady=5)
-    
-    folder_frame = ttk.Frame(main_frame)
-    folder_frame.grid(row=1, column=1, columnspan=2, sticky=(tk.W, tk.E), pady=5)
-    folder_frame.columnconfigure(0, weight=1)
-    
-    self.folder_entry = ttk.Entry(folder_frame, textvariable=self.selected_folder, 
-                                 state="readonly", width=50)
-    self.folder_entry.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=(0, 5))
-    
-    self.browse_button = ttk.Button(folder_frame, text="Examinar", 
-                                   command=self.browse_folder)
-    self.browse_button.grid(row=0, column=1)
-    
     # Botones de acción
     button_frame = ttk.Frame(main_frame)
     button_frame.grid(row=2, column=0, columnspan=3, pady=20)
     
-    self.process_button = ttk.Button(button_frame, text="Procesar Archivos", 
-                                    command=self.process_files, state="disabled")
+    self.process_button = ttk.Button(button_frame, text="Convertir Todas las Instancias", 
+                                    command=self.process_files, state="normal")
     self.process_button.pack(side=tk.LEFT, padx=5)
     
     self.clear_button = ttk.Button(button_frame, text="Limpiar", 
@@ -90,7 +78,7 @@ class GeneradorDZNGUI:
     
     # Información inicial
     self.log_message("=== Generador de archivos DZN para MinExt ===")
-    self.log_message("Seleccione una carpeta que contenga archivos .txt para procesar")
+    self.log_message("Presione 'Convertir Todas las Instancias' para procesar los archivos.")
     self.log_message(f"Los archivos .dzn se generarán en: {self.dzn_dir}")
     self.log_message("")
     
@@ -99,39 +87,8 @@ class GeneradorDZNGUI:
       self.dzn_dir.mkdir(exist_ok=True)
       self.log_message(f"✓ Creada carpeta de salida: {self.dzn_dir}")
 
-  def browse_folder(self):
-    """Abre el diálogo para seleccionar carpeta"""
-    folder = filedialog.askdirectory(
-      title="Seleccionar carpeta con archivos .txt",
-      initialdir=str(self.project_dir)
-    )
-    
-    if folder:
-      self.selected_folder.set(folder)
-      self.log_message(f"📁 Carpeta seleccionada: {folder}")
-      
-      # Contar archivos .txt en la carpeta
-      txt_files = list(Path(folder).glob("*.txt"))
-      self.log_message(f"   Archivos .txt encontrados: {len(txt_files)}")
-      
-      if txt_files:
-        self.process_button.config(state="normal")
-        for txt_file in txt_files[:5]:  # Mostrar máximo 5 archivos
-          self.log_message(f"   - {txt_file.name}")
-        if len(txt_files) > 5:
-          self.log_message(f"   ... y {len(txt_files) - 5} archivos más")
-      else:
-        self.process_button.config(state="disabled")
-        self.log_message("   ⚠️  No se encontraron archivos .txt en la carpeta")
-      
-      self.log_message("")
-
   def process_files(self):
-    """Procesa los archivos .txt de la carpeta seleccionada"""
-    if not self.selected_folder.get():
-      messagebox.showwarning("Advertencia", "Por favor seleccione una carpeta primero")
-      return
-      
+    """Procesa los archivos .txt de las carpetas de origen""" 
     if self.processing:
       return
       
@@ -143,25 +100,29 @@ class GeneradorDZNGUI:
   def _process_files_thread(self):
     """Hilo para procesar archivos sin bloquear la interfaz"""
     self.processing = True
+    self.processing = True
     self.process_button.config(state="disabled")
-    self.browse_button.config(state="disabled")
     self.progress.start()
     
     try:
-      folder_path = Path(self.selected_folder.get())
-      txt_files = list(folder_path.glob("*.txt"))
-      
-      if not txt_files:
-        self.log_message("❌ No hay archivos .txt para procesar")
+      all_txt_files = []
+      for source_dir in self.source_dirs:
+        if source_dir.exists():
+          all_txt_files.extend(list(source_dir.glob("*.txt")))
+        else:
+          self.log_message(f"⚠️  Advertencia: El directorio {source_dir} no existe y será omitido.")
+
+      if not all_txt_files:
+        self.log_message("❌ No se encontraron archivos .txt en los directorios de origen.")
         return
       
-      self.log_message(f"🚀 Iniciando procesamiento de {len(txt_files)} archivos...")
+      self.log_message(f"🚀 Iniciando procesamiento de {len(all_txt_files)} archivos...")
       self.log_message("")
       
       success_count = 0
       error_count = 0
       
-      for txt_file in txt_files:
+      for txt_file in all_txt_files:
         try:
           self.log_message(f"📝 Procesando: {txt_file.name}")
           
@@ -205,7 +166,6 @@ class GeneradorDZNGUI:
     finally:
       self.processing = False
       self.process_button.config(state="normal")
-      self.browse_button.config(state="normal")
       self.progress.stop()
 
   def clear_log(self):
